@@ -1,0 +1,24 @@
+version: "3.8"
+
+volumes:
+  opengrok-data:
+    name: "opengrok-data"
+  opengrok-etc:
+    name: "opengrok-etc"
+
+services:
+  opengrok:
+    container_name: opengrok
+    image: opengrok/docker:1.3.16
+    restart: always
+    ports:
+      - 1111:8080
+    environment:
+      # REINDEX is how often opengrok will be indexing your source codes
+      REINDEX: 60
+      # INDEXER_OPT is the list of the files and folders that you might want to exclude from indexing
+      INDEXER_OPT: "-i d:node_modules -i d:build -i d:.idea -i d:.run -i d:.git -i f:.DS_Store -i f:.gitignore -i f:*.class -i f:*.classpath -i f:*.log -i f:*.jar"
+    volumes:
+      - ~/repos/:/opengrok/src/        # mapping to your local repositories folder, you can change it to match your reality
+      - opengrok-data:/opengrok/data/  # index and other things for source code
+      - opengrok-etc:/opengrok/etc/    # folder contains configuration.xml
